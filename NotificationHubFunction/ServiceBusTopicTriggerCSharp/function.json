@@ -1,0 +1,14 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "name": "mySbMsg",
+      "type": "serviceBusTrigger",
+      "direction": "in",
+      "topicName": "warnings",
+      "subscriptionName": "functionSubscription",
+      "accessRights": "manage",
+      "connection": "AzureWebJobsServiceBus"
+    }
+  ]
+}
