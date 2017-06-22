@@ -16,7 +16,7 @@ namespace NotificationConsole
         static NotificationHubClient hub = NotificationHubClient.CreateClientFromConnectionString(NotificationHubConnectionString, HubName);
 
         private static string ServiceBusConnectionString = ConfigurationManager.AppSettings["ServiceBus.ConnectionString"];
-        public static TopicClient Client = TopicClient.CreateFromConnectionString(ServiceBusConnectionString, "warnings");
+        public static TopicClient Client = TopicClient.CreateFromConnectionString(ServiceBusConnectionString, "warnings"); // warnings is the topic for service bus
 
         static void Main(string[] args)
         {
