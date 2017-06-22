@@ -19,7 +19,7 @@ namespace NotificationHubFunctionLibrary
 
         public async Task SendNotificationAsync(string words)
         {
-            var toast = @"<toast><visual><binding template=""ToastText01""><text id=""1"">" + _adendum + " " + words + @"</text></binding></visual></toast>";
+            var toast = @"<toast><visual><binding template=""ToastText01""><text id=""1"">" + words + @"</text></binding></visual></toast>";
             await _hub.SendWindowsNativeNotificationAsync(toast);
         }
     }
