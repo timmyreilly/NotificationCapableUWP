@@ -18,24 +18,45 @@ namespace NotificationConsole
 
         static void Main(string[] args)
         {
-            var words = Console.ReadLine();
-            if (words == "s")
+
+            int menuchoice = 0; 
+
+            while(menuchoice != 7)
             {
-                Console.WriteLine("what do you want to put in Service Bus? :");
-                var w = Console.ReadLine();
+                Console.WriteLine("Menu");
+                Console.WriteLine("Enter a number for your selection");
+                Console.WriteLine("1. Send message to Service Bus");
+                Console.WriteLine("2. Send message to notification hub");
+                Console.WriteLine("7. Quit");
 
-                SendToSB(w);
+                menuchoice = int.Parse(Console.ReadLine());
+
+                switch (menuchoice)
+                {
+                    case 1:
+                        Console.WriteLine("What do you want to put in Service Bus?");
+                        var w = Console.ReadLine();
+                        SendToSB(w);
+                        break;
+                    case 2:
+                        Console.WriteLine("What do you want to be in the notification?");
+                        var n = Console.ReadLine();
+                        SendNotificationAsync(n); 
+                        break;
+                    case 7:
+                        break;
+                    default:
+                        Console.Write("Sorry, invalid selection.");
+                        break; 
+                } 
             }
-            SendNotificationAsync(words);
-            Console.ReadLine();
-
 
         }
 
         private static async void SendToSB(string words)
         {
             BrokeredMessage message = new BrokeredMessage("Test: " + words);
-            await Client.SendAsync(message); 
+            await Client.SendAsync(message);
 
         }
 
