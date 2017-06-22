@@ -9,7 +9,6 @@ namespace NotificationHubFunctionLibrary
 {
     public class Logic
     {
-        private static string _adendum;
         private NotificationHubClient _hub;
 
         public Logic(string notificationHubConnectionString, string hubName)

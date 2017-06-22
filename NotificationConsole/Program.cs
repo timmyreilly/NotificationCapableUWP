@@ -11,7 +11,6 @@ namespace NotificationConsole
 {
     class Program
     {
-
         private const string ServiceBusConnectionString = "Endpoint=sb://trackbus.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=IPVbf690OcTx+RLgqA+N8fPQofb9i9SraxpQ7qB9R6s=";
         private const string QueueName = "";
         public static TopicClient Client = TopicClient.CreateFromConnectionString(ServiceBusConnectionString, "warnings");
