@@ -81,38 +81,56 @@ namespace NotificationConsole
 
         private static async void SendNotificationAsync(string words, string tags)
         {
-            var toast = TemplateMaker(words);
+            var toast = WindowsTemplateMaker(words);
 
-            var windowsResult = await hub.SendWindowsNativeNotificationAsync(toast, tags); 
+            var windowsResult = await hub.SendWindowsNativeNotificationAsync(toast, tags);
         }
 
-        public static string TemplateMaker(string notificationText)
+        public static string WindowsTemplateMaker(string notificationText)
         {
+            //          var windowsResult =
+            //            await hub.SendWindowsNativeNotificationAsync(toast, tags;
+
             var toast = new XElement("toast",
                 new XElement("visual",
                 new XElement("binding",
                 new XAttribute("template", "ToastText01"),
                 new XElement("text",
                 new XAttribute("id", "1"),
-                "$(message)")))).ToString(SaveOptions.DisableFormatting);
-
-            var alert = new JObject(
-              new JProperty("aps", new JObject(new JProperty("alert", "$(message)"))),
-              new JProperty("inAppMessage", notificationText))
-              .ToString(Newtonsoft.Json.Formatting.None);
-
-            var payload = new JObject(
-              new JProperty("data", new JObject(new JProperty("message", "$(message)"))))
-              .ToString(Newtonsoft.Json.Formatting.None);
+                $"{notificationText}")))).ToString(SaveOptions.DisableFormatting);
 
             return toast;
+        }
+
+        public static string GoogleTeamplateMaker(string notificationText)
+        {
+            //          var googleResult =
+            //            await hub.SendGcmNativeNotificationAsync(payload, tags);
+
+            var payload = new JObject(
+              new JProperty("data", new JObject(new JProperty("message", $"{notificationText}"))))
+              .ToString(Newtonsoft.Json.Formatting.None);
+
+            return payload;
+        }
+
+        public static string AppleTemplateMaker(string notificationText)
+        {
+            //          var appleResult =
+            //            await hub.SendAppleNativeNotificationAsync(alert, tags);
+
+            var alert = new JObject(
+                new JProperty("aps", new JObject(new JProperty("alert", $"{ notificationText } "))),
+                new JProperty("inAppMessage", notificationText)).ToString(Newtonsoft.Json.Formatting.None);
+
+            return alert; 
         }
 
         private async Task CreateChannel()
         {
             // var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync(); 
 
-            
+
         }
 
         private async Task SetupNotifications()
