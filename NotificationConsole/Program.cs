@@ -75,6 +75,16 @@ namespace NotificationConsole
         }
 
 
+        private async Task CreateChannel()
+        {
+
+        }
+
+        private async Task SetupNotifications()
+        {
+            var registrations = await hub.GetRegistrationsByChannelAsync("officer1", 1);
+        }
+
 
 
     }
