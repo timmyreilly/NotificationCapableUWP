@@ -9,6 +9,7 @@ using System.Configuration;
 using Windows.Networking.PushNotifications;
 using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace NotificationConsole
 {
@@ -39,9 +40,14 @@ namespace NotificationConsole
                 switch (menuchoice)
                 {
                     case 1:
-                        Console.WriteLine("What do you want to put in Service Bus?");
-                        var w = Console.ReadLine();
-                        SendToSB(w);
+                        EventData e = new EventData(); 
+                        Console.WriteLine("deviceId? officer1 officer2");
+                        e.deviceID = Console.ReadLine();
+                        Console.WriteLine("alertText? out of office");
+                        e.alertText = Console.ReadLine();
+                        Console.WriteLine("alertLevel? high");
+                        e.alertLevel = Console.ReadLine();
+                        SendToSB(JsonConvert.SerializeObject(e));
                         break;
                     case 2:
                         Console.WriteLine("What do you want to be in the notification?");
@@ -62,7 +68,7 @@ namespace NotificationConsole
 
         private static async void SendToSB(string words)
         {
-            BrokeredMessage message = new BrokeredMessage("Test: " + words);
+            BrokeredMessage message = new BrokeredMessage(words);
             await Client.SendAsync(message);
 
         }

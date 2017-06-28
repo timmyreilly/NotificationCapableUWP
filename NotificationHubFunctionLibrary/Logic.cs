@@ -7,6 +7,9 @@ using Microsoft.Azure.NotificationHubs;
 using Windows.Networking.PushNotifications;
 using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
+using NotificationHubFunctionLibrary.Models;
+using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace NotificationHubFunctionLibrary
 {
@@ -20,18 +23,27 @@ namespace NotificationHubFunctionLibrary
 
         }
 
-        public async Task SendNotificationAsync(string words)
+        //public async Task SendNotificationAsync(string words)
+        //{
+        //    var toast = @"<toast><visual><binding template=""ToastText01""><text id=""1"">" + words + @"</text></binding></visual></toast>";
+        //    await _hub.SendWindowsNativeNotificationAsync(toast);
+        //}
+
+        public async void SendNotificationAsync(string mySbMsg)
         {
-            var toast = @"<toast><visual><binding template=""ToastText01""><text id=""1"">" + words + @"</text></binding></visual></toast>";
-            await _hub.SendWindowsNativeNotificationAsync(toast);
+            var e = DeserializeMessage(mySbMsg);
+
+            var toast = WindowsTemplateMaker(e);
+
+            var windowsResult = await _hub.SendWindowsNativeNotificationAsync(toast, e.deviceId);
+            Debug.WriteLine(windowsResult);
         }
 
-        public async Task SendNotificationAsync(string words, string tagExpression)
+        public EventData DeserializeMessage(string mySbMsg)
         {
-            var toast = @"<toast><visual><binding template=""ToastText01""><text id=""1"">" + words + @"</text></binding></visual></toast>";
-            await _hub.SendWindowsNativeNotificationAsync(toast, tagExpression);
+            var e = JsonConvert.DeserializeObject<EventData>(mySbMsg);
+            return e; 
         }
-
 
         public async void SubscribeToCategories(string categories)
         {
@@ -50,9 +62,19 @@ namespace NotificationHubFunctionLibrary
             const string templateBodyWNS = "<toast><visual><binding template=\"ToastText01\"><text id=\"1\">$(messageParam)</text></binding></visual></toast>";
 
             await _hub.CreateWindowsTemplateRegistrationAsync(channel, templateBodyWNS);
+        } // probably junk 
+
+        public async void SendNotificationAsync(string words, string tags)
+        {
+            var e = DeserializeMessage(words); 
+
+            var toast = WindowsTemplateMaker(e);
+
+            var windowsResult = await _hub.SendWindowsNativeNotificationAsync(toast, tags);
+            Debug.WriteLine(windowsResult); 
         }
 
-        public string template(string notificationText)
+        public static string WindowsTemplateMaker(EventData notification)
         {
             var toast = new XElement("toast",
                 new XElement("visual",
@@ -60,16 +82,7 @@ namespace NotificationHubFunctionLibrary
                 new XAttribute("template", "ToastText01"),
                 new XElement("text",
                 new XAttribute("id", "1"),
-                "$(message)")))).ToString(SaveOptions.DisableFormatting);
-
-            var alert = new JObject(
-              new JProperty("aps", new JObject(new JProperty("alert", "$(message)"))),
-              new JProperty("inAppMessage", notificationText))
-              .ToString(Newtonsoft.Json.Formatting.None);
-
-            var payload = new JObject(
-              new JProperty("data", new JObject(new JProperty("message", "$(message)"))))
-              .ToString(Newtonsoft.Json.Formatting.None);
+                $"deviceId: {notification.deviceId} alertText: {notification.alertText} alertLevel: {notification.alertLevel}")))).ToString(SaveOptions.DisableFormatting);
 
             return toast;
         }
