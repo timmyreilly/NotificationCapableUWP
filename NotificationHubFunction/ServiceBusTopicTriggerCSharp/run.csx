@@ -13,7 +13,6 @@ public static void Run(string mySbMsg, TraceWriter log)
 
     var logic = new Logic(notificationHubConnectionString, hubName);
 
-    var eventData = logic.DeserializeMessage(mySbMsg);
     logic.SendNotificationAsync(mySbMsg); 
 
     log.Info($"C# ServiceBus topic trigger function processed message: {mySbMsg}");

@@ -73,12 +73,6 @@ namespace NotificationConsole
 
         }
 
-        private static async void SendNotificationAsync()
-        {
-            var toast = @"<toast><visual><binding template=""ToastText01""><text id=""1"">Hello from a .NET App!</text></binding></visual></toast>";
-            await hub.SendWindowsNativeNotificationAsync(toast);
-        }
-
         private static async void SendNotificationAsync(string words)
         {
             var toast = @"<toast><visual><binding template=""ToastText01""><text id=""1"">" + words + @"</text></binding></visual></toast>";
@@ -131,20 +125,6 @@ namespace NotificationConsole
 
             return alert; 
         }
-
-        private async Task CreateChannel()
-        {
-            // var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync(); 
-
-
-        }
-
-        private async Task SetupNotifications()
-        {
-            var registrations = await hub.GetRegistrationsByChannelAsync("officer1", 1);
-        }
-
-
 
     }
 }
