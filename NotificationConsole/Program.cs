@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.Azure.NotificationHubs;
 using Microsoft.ServiceBus.Messaging;
 using System.Configuration;
+using Windows.Networking.PushNotifications;
+using System.Xml.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace NotificationConsole
 {
@@ -43,7 +46,9 @@ namespace NotificationConsole
                     case 2:
                         Console.WriteLine("What do you want to be in the notification?");
                         var n = Console.ReadLine();
-                        SendNotificationAsync(n);
+                        Console.WriteLine("Who should receive the notification? officer1 officer2");
+                        var t = Console.ReadLine();
+                        SendNotificationAsync(n, t);
                         break;
                     case 7:
                         break;
@@ -74,10 +79,40 @@ namespace NotificationConsole
             await hub.SendWindowsNativeNotificationAsync(toast);
         }
 
+        private static async void SendNotificationAsync(string words, string tags)
+        {
+            var toast = TemplateMaker(words);
+
+            var windowsResult = await hub.SendWindowsNativeNotificationAsync(toast, tags); 
+        }
+
+        public static string TemplateMaker(string notificationText)
+        {
+            var toast = new XElement("toast",
+                new XElement("visual",
+                new XElement("binding",
+                new XAttribute("template", "ToastText01"),
+                new XElement("text",
+                new XAttribute("id", "1"),
+                "$(message)")))).ToString(SaveOptions.DisableFormatting);
+
+            var alert = new JObject(
+              new JProperty("aps", new JObject(new JProperty("alert", "$(message)"))),
+              new JProperty("inAppMessage", notificationText))
+              .ToString(Newtonsoft.Json.Formatting.None);
+
+            var payload = new JObject(
+              new JProperty("data", new JObject(new JProperty("message", "$(message)"))))
+              .ToString(Newtonsoft.Json.Formatting.None);
+
+            return toast;
+        }
 
         private async Task CreateChannel()
         {
+            // var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync(); 
 
+            
         }
 
         private async Task SetupNotifications()

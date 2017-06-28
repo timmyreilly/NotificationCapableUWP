@@ -40,8 +40,11 @@ namespace TRACKtechUWP
         {
             var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
 
+            IEnumerable<string> tags = new string[] { "officer1" }; 
+
+
             var hub = new NotificationHub("TTNHub", "Endpoint=sb://tracktech.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=iGUSylHGxLL7fGJUoOFJnE4brtLdVbvZnn5kYY9njqo=");
-            var result = await hub.RegisterNativeAsync(channel.Uri);
+            var result = await hub.RegisterNativeAsync(channel.Uri, tags);
 
             // Displays the registration ID so you know it was successful
             if (result.RegistrationId != null)
